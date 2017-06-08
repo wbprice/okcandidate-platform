@@ -89,7 +89,7 @@ class CategoryListItem extends Component {
                     <span className="category-name-label">{this.props.name}</span>
                 </div>
           </div>
-        ))
+        ));
     }
 }
 

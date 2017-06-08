@@ -54,6 +54,8 @@ class CategoryList extends Component {
                         <CategoryListItem
                             key={index}
                             moveCard={this.moveCard}
+                            id={categoryItem.id}
+                            index={index}
                             name={categoryItem.name}
                             icon={categoryItem.icon}
                             rank={categoryItem.rank} />
