@@ -11,13 +11,12 @@ class CategoryListItem extends Component {
                 </div>
 
                 <CategoryListItemName
-                    moveCard={this.props.moveCard}
-                    icon={this.props.icon}
-                    name={this.props.name}
                     index={this.props.index}
                     id={this.props.id}
-                />
-          </div>
+                    name={this.props.name}
+                    icon={this.props.icon}
+                    moveCard={this.props.moveCard} />
+            </div>
         );
     }
 }

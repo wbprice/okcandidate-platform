@@ -1,9 +1,11 @@
 import React, { PropTypes, Component } from 'react';
-import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
+import MultiBackend, { Preview } from 'react-dnd-multi-backend';
+import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 import update from 'immutability-helper';
 
 import CategoryListItem from './../organisms/CategoryListItem';
+import CategoryListItemName from './../organisms/CategoryListItemName';
 
 class CategoryList extends Component {
 
@@ -15,21 +17,35 @@ class CategoryList extends Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    generatePreview(type, item, style) {
+        const category = this.state.categories.find(category => {
+            return category.id === item.id;
+        });
+        return (
+            <div style={style}>
+                <CategoryListItemName
+                    name={category.name}
+                    icon={category.icon}
+                />
+            </div>
+        );
+    }
+
+    componentWillReceiveProps(newProps) {
         this.setState({
-            categories: nextProps.categories
+            categories: newProps.categories
         });
     }
 
     moveCard(dragIndex, hoverIndex) {
-        const {categories} = this.state;
-        const dragCategory = categories[dragIndex];
+        const { categories } = this.state;
+        const dragCard = categories[dragIndex];
 
         this.setState(update(this.state, {
             categories: {
                 $splice: [
                     [dragIndex, 1],
-                    [hoverIndex, 0, dragCategory]
+                    [hoverIndex, 0, dragCard]
                 ]
             }
         }));
@@ -38,28 +54,28 @@ class CategoryList extends Component {
     render() {
         return (
             <div className="category-list">
+                <Preview generator={this.generatePreview.bind(this)} />
                 {
                     this.state.categories.map((categoryItem, index) => {
                         return (
                             <CategoryListItem
-                                key={index}
-                                moveCard={this.moveCard}
-                                id={categoryItem.id}
+                                key={categoryItem.id}
                                 index={index}
+                                id={categoryItem.id}
                                 name={categoryItem.name}
                                 icon={categoryItem.icon}
-                                rank={categoryItem.rank} />
+                                moveCard={this.moveCard} />
                         );
                     })
                 }
             </div>
         );
-    }
+    }}
 
-}
+
 
 CategoryList.propTypes = {
     categories: PropTypes.array
 };
 
-export default DragDropContext(HTML5Backend)(CategoryList);
+export default DragDropContext(MultiBackend(HTML5toTouch))(CategoryList);

@@ -1,9 +1,9 @@
 'use strict';
 
-import { findDOMNode } from 'react-dom';
-import { DragSource, DropTarget } from 'react-dnd';
 import React, { Component, PropTypes } from 'react';
 import Icon from './../atoms/Icon';
+import { findDOMNode } from 'react-dom';
+import { DragSource, DropTarget } from 'react-dnd';
 
 const ItemTypes = {
     CARD: 'card'
@@ -23,20 +23,21 @@ const cardTarget = {
         const dragIndex = monitor.getItem().index;
         const hoverIndex = props.index;
 
+        // Don't replace items with themselves
         if (dragIndex === hoverIndex) {
             return;
         }
 
-        // bounding rect
+        // Determine rectangle on screen
         const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
 
-        // vertical middle
+        // Get vertical middle
         const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
-        // mouse offset
+        // Determine mouse position
         const clientOffset = monitor.getClientOffset();
 
-        // get pixels to top
+        // Get pixels to the top
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
         // Only perform the move when the mouse has crossed half of the items height
@@ -60,9 +61,9 @@ const cardTarget = {
         // Generally it's better to avoid mutations,
         // but it's good here for the sake of performance
         // to avoid expensive index searches.
-        // monitor.getItem().index = hoverIndex;
+        monitor.getItem().index = hoverIndex;
     }
-};
+}
 
 class CategoryListItemName extends Component {
     render() {
@@ -72,7 +73,7 @@ class CategoryListItemName extends Component {
             isDragging
         } = this.props;
 
-        return connectDragSource(connectDropTarget(
+        return connectDragSource(connectDropTarget((
             <div className={`category-name card ${isDragging ? 'hidden' : ''}`}>
                 {
                     this.props.icon &&
@@ -80,27 +81,23 @@ class CategoryListItemName extends Component {
                 }
                 <span className="category-name-label">{this.props.name}</span>
             </div>
-        ));
+        )));
     }
 }
 
 CategoryListItemName.propTypes = {
-    connectDragSource: PropTypes.func.isRequired,
-    connectDropTarget: PropTypes.func.isRequired,
-    isDragging: PropTypes.bool.isRequired,
     icon: PropTypes.string,
     name: PropTypes.string,
-    id: PropTypes.number,
     index: PropTypes.number
 };
 
-const DragCategoryListItemName = DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
+const DropCategoryListItemName = DropTarget(ItemTypes.CARD, cardTarget, (connect) => ({
+    connectDropTarget: connect.dropTarget()
 }))(CategoryListItemName);
 
-const DragDropCategoryListItemName  = DropTarget(ItemTypes.CARD, cardTarget, (connect) => ({
-    connectDropTarget: connect.dropTarget()
-}))(DragCategoryListItemName);
+const DragDropCategoryListItemName = DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+}))(DropCategoryListItemName);
 
 export default DragDropCategoryListItemName;
