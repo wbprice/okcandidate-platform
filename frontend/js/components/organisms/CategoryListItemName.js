@@ -68,11 +68,12 @@ class CategoryListItemName extends Component {
     render() {
         const {
             connectDragSource,
-            connectDropTarget
+            connectDropTarget,
+            isDragging
         } = this.props;
 
         return connectDragSource(connectDropTarget(
-            <div className="category-name card">
+            <div className={`category-name card ${isDragging ? 'hidden' : ''}`}>
                 {
                     this.props.icon &&
                     <Icon className="medium padding">{this.props.icon}</Icon>
@@ -88,7 +89,9 @@ CategoryListItemName.propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
     icon: PropTypes.string,
-    name: PropTypes.string
+    name: PropTypes.string,
+    id: PropTypes.number,
+    index: PropTypes.number
 };
 
 const DragCategoryListItemName = DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({

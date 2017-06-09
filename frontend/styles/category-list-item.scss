@@ -19,6 +19,10 @@
         align-items: center;
         margin-bottom: 0;
 
+        &.hidden {
+            opacity: 0;
+        }
+
         &.card {
             padding: 1em 2em;
             .icon {

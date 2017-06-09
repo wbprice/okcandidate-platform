@@ -11,9 +11,11 @@ class CategoryListItem extends Component {
                 </div>
 
                 <CategoryListItemName
-                    moveCard={this.moveCard}
+                    moveCard={this.props.moveCard}
                     icon={this.props.icon}
                     name={this.props.name}
+                    index={this.props.index}
+                    id={this.props.id}
                 />
           </div>
         );
@@ -23,7 +25,9 @@ class CategoryListItem extends Component {
 CategoryListItem.propTypes = {
     name: PropTypes.string,
     icon: PropTypes.string,
-    index: PropTypes.number
+    index: PropTypes.number,
+    moveCard: PropTypes.func,
+    id: PropTypes.number
 };
 
 export default CategoryListItem;
