@@ -49,18 +49,18 @@ class CategoryList extends Component {
             <div className="category-list">
                 <Preview generator={this.generatePreview.bind(this)} />
                 {
-                this.state.categories.map((categoryItem, index) => {
-                    return (
-                        <CategoryListItem
-                            key={index}
-                            moveCard={this.moveCard}
-                            id={categoryItem.id}
-                            index={index}
-                            name={categoryItem.name}
-                            icon={categoryItem.icon}
-                            rank={categoryItem.rank} />
-                    );
-                })
+                    this.state.categories.map((categoryItem, index) => {
+                        return (
+                            <CategoryListItem
+                                key={index}
+                                moveCard={this.moveCard}
+                                id={categoryItem.id}
+                                index={index}
+                                name={categoryItem.name}
+                                icon={categoryItem.icon}
+                                rank={categoryItem.rank} />
+                        );
+                    })
                 }
             </div>
         );
