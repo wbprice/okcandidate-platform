@@ -1,14 +1,17 @@
 import React, { PropTypes, Component } from 'react';
 
-import CategoryListItemName from './../organisms/CategoryListItemName';
+import { CategoryListItemName } from './../organisms/CategoryListItemName';
 
 class CategoryListItem extends Component {
     render() {
         return (
             <div className="category-list-item">
-                <div className="rank">
-                    <label>{this.props.index + 1}</label>
-                </div>
+                {
+                    this.props.index + 1 &&
+                    <div className="rank">
+                        <label>{this.props.index + 1}</label>
+                    </div>
+                }
 
                 <CategoryListItemName
                     index={this.props.index}

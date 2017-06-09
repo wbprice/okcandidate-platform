@@ -73,7 +73,7 @@ class CategoryListItemName extends Component {
             isDragging
         } = this.props;
 
-        return connectDragSource(connectDropTarget((
+        const template = (
             <div className={`category-name card ${isDragging ? 'hidden' : ''}`}>
                 {
                     this.props.icon &&
@@ -81,14 +81,22 @@ class CategoryListItemName extends Component {
                 }
                 <span className="category-name-label">{this.props.name}</span>
             </div>
-        )));
+        );
+
+        if (connectDragSource && connectDropTarget) {
+            return connectDragSource(connectDropTarget((template)));
+        }
+        return template;
     }
 }
 
 CategoryListItemName.propTypes = {
     icon: PropTypes.string,
     name: PropTypes.string,
-    index: PropTypes.number
+    index: PropTypes.number,
+    connectDragSource: PropTypes.func,
+    connectDropTarget: PropTypes.func,
+    isDragging: PropTypes.bool
 };
 
 const DropCategoryListItemName = DropTarget(ItemTypes.CARD, cardTarget, (connect) => ({
@@ -100,4 +108,8 @@ const DragDropCategoryListItemName = DragSource(ItemTypes.CARD, cardSource, (con
     isDragging: monitor.isDragging()
 }))(DropCategoryListItemName);
 
-export default DragDropCategoryListItemName;
+export {
+    DragDropCategoryListItemName as CategoryListItemName,
+    CategoryListItemName as CategoryListItemNameStatic
+};
+

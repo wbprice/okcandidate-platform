@@ -5,7 +5,7 @@ import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 import update from 'immutability-helper';
 
 import CategoryListItem from './../organisms/CategoryListItem';
-import CategoryListItemName from './../organisms/CategoryListItemName';
+import { CategoryListItemNameStatic } from './../organisms/CategoryListItemName';
 
 class CategoryList extends Component {
 
@@ -22,11 +22,10 @@ class CategoryList extends Component {
             return category.id === item.id;
         });
         return (
-            <div style={style}>
-                <CategoryListItemName
+            <div style={style} className="category-list-item">
+                <CategoryListItemNameStatic
                     name={category.name}
-                    icon={category.icon}
-                />
+                    icon={category.icon} />
             </div>
         );
     }
