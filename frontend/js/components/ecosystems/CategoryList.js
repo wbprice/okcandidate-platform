@@ -1,6 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import MultiBackend, { Preview } from 'react-dnd-multi-backend';
-import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
+import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 import update from 'immutability-helper';
 
@@ -22,14 +21,6 @@ class CategoryList extends Component {
         });
     }
 
-    generatePreview(type, item, style) {
-        return (
-            <div style={style}>
-                <pre>Generated Card</pre>
-            </div>
-        );
-    }
-
     moveCard(dragIndex, hoverIndex) {
         const {categories} = this.state;
         const dragCategory = categories[dragIndex];
@@ -47,7 +38,6 @@ class CategoryList extends Component {
     render() {
         return (
             <div className="category-list">
-                <Preview generator={this.generatePreview.bind(this)} />
                 {
                     this.state.categories.map((categoryItem, index) => {
                         return (
@@ -72,4 +62,4 @@ CategoryList.propTypes = {
     categories: PropTypes.array
 };
 
-export default DragDropContext(MultiBackend(HTML5toTouch))(CategoryList);
+export default DragDropContext(HTML5Backend)(CategoryList);

@@ -23,7 +23,7 @@ const cardTarget = {
         const dragIndex = monitor.getItem().index;
         const hoverIndex = props.index;
 
-        if (dragIndex == hoverIndex) {
+        if (dragIndex === hoverIndex) {
             return;
         }
 
@@ -60,7 +60,7 @@ const cardTarget = {
         // Generally it's better to avoid mutations,
         // but it's good here for the sake of performance
         // to avoid expensive index searches.
-        monitor.getItem().index = hoverIndex;
+        // monitor.getItem().index = hoverIndex;
     }
 };
 
@@ -68,11 +68,12 @@ class CategoryListItemName extends Component {
     render() {
         const {
             connectDragSource,
-            connectDropTarget
+            connectDropTarget,
+            isDragging
         } = this.props;
 
         return connectDragSource(connectDropTarget(
-            <div className={'category-name card'}>
+            <div className={`category-name card ${isDragging ? 'hidden' : ''}`}>
                 {
                     this.props.icon &&
                     <Icon className="medium padding">{this.props.icon}</Icon>
