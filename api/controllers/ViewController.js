@@ -14,6 +14,15 @@ module.exports = class ViewController extends Controller {
         });
     }
 
+    surveyList(request, reply) {
+        getLayout(request, 'client', function(error, html) {
+            if (error) {
+                // handle error
+            }
+            reply(html);
+        })
+    }
+
     survey(request, reply) {
         getLayout(request, 'client', function(error, html) {
             if (error) {

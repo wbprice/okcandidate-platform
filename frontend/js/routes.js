@@ -6,6 +6,7 @@ import Home from './components/environments/Home';
 import Admin from './components/environments/Admin';
 import Category from './components/environments/Category';
 import Survey from './components/environments/Survey';
+import SurveyPicker from './components/environments/SurveyPicker';
 import SurveyCreator from './components/environments/SurveyCreator';
 import SurveyManager from './components/environments/SurveyManager';
 import SurveyAnalyzer from './components/environments/SurveyAnalyzer';
@@ -18,8 +19,10 @@ import Results from './components/environments/Results';
 module.exports = (
   <Route path="/" component={Frame}>
     <IndexRoute component={Home} />
-    <Route path="category" component={Category} />
-    <Route path="survey" component={Survey} />
+    <Route path="survey" component={SurveyPicker} />
+    <Route path="survey/:surveyId" component={Category} />
+    <Route path="survey/:surveyId/categories" component={Category} />
+    <Route path="survey/:surveyId/questions" component={Survey} />
     <Route path="results/:passPhrase" component={Results} />
     <Route path="admin" component={Admin} />
     <Route path="admin/survey" component={SurveyManager} />
