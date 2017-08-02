@@ -11,6 +11,15 @@ export function setSurveyFormat(multipleChoice, sentiment) {
     };
 }
 
+export const SET_SURVEY_RESULT = 'SET_SURVEY_RESULT';
+
+export function setSurveyResponses(surveyResult) {
+    return {
+        type: SET_SURVEY_RESULT,
+        SurveyResultAnswers: surveyResult.SurveyResultAnswers
+    };
+}
+
 export const FETCH_SURVEY_QUESTIONS_REQUEST = 'FETCH_SURVEY_QUESTIONS_REQUEST';
 export const FETCH_SURVEY_QUESTIONS_SUCCESS = 'FETCH_SURVEY_QUESTIONS_SUCCESS';
 export const FETCH_SURVEY_QUESTIONS_FAILURE = 'FETCH_SURVEY_QUESTIONS_FAILURE';
@@ -40,16 +49,20 @@ export function fetchSurveyQuestions(id) {
         dispatch(fetchSurveyQuestionsRequest());
         return Promise.all([
             fetch(`/api/v1/question?SurveyId=${id}`),
-            fetch(`/api/v1/survey/${id}?populate=QuestionType`)
+            fetch(`/api/v1/survey/${id}?populate=QuestionType`),
+            fetch('/api/v1/surveyresult/getOne', {
+                credentials: 'same-origin'
+            })
         ])
             .then(responses => Promise.all(responses.map(checkStatus)))
             .then(responses => Promise.all(responses.map(response => response.json())))
-            .then(([questions, survey]) => {
+            .then(([questions, survey, surveyresult]) => {
                 dispatch(setSurveyFormat(
                     survey.QuestionType.multipleChoice,
                     survey.QuestionType.sentiment
                 ));
                 dispatch(fetchSurveyQuestionsSuccess(questions));
+                dispatch(setSurveyResponses(surveyresult));
             })
             .catch(error => dispatch(fetchSurveyQuestionsFailure(error)));
     };
@@ -86,5 +99,204 @@ export function gotoNextQuestion() {
 export function gotoPrevQuestion() {
     return {
         type: GOTO_PREV_QUESTION
+    };
+}
+
+export const CREATE_SURVEY_RESULT_REQUEST = 'CREATE_SURVEY_RESULT_REQUEST';
+export const CREATE_SURVEY_RESULT_SUCCESS = 'CREATE_SURVEY_RESULT_SUCCESS';
+export const CREATE_SURVEY_RESULT_FAILURE = 'CREATE_SURVEY_RESULT_FAILURE';
+
+export function createSurveyResultRequest() {
+    return {
+        type: CREATE_SURVEY_RESULT_REQUEST
+    };
+}
+
+export function createSurveyResultSuccess(response) {
+    return {
+        type: CREATE_SURVEY_RESULT_SUCCESS,
+        response
+    };
+}
+
+export function createSurveyResultFailure(error) {
+    return {
+        type: CREATE_SURVEY_RESULT_FAILURE,
+        error
+    };
+}
+
+export function createSurveyResult(SurveyId, callback) {
+    return (dispatch) => {
+        dispatch(createSurveyResultRequest());
+        return fetch('/api/v1/surveyresult', {
+            credentials: 'same-origin',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                SurveyId: SurveyId
+            })
+        })
+            .then(checkStatus)
+            .then(response => response.json())
+            .then(response => {
+                dispatch(createSurveyResultSuccess(response));
+                return callback && callback(null, response);
+            })
+            .catch(error => {
+                dispatch(createSurveyResultFailure(error));
+                return callback && callback(error);
+            });
+    };
+}
+
+export const FETCH_SURVEY_RESULT_REQUEST = 'FETCH_SURVEY_RESULT_REQUEST';
+export const FETCH_SURVEY_RESULT_SUCCESS = 'FETCH_SURVEY_RESULT_SUCCESS';
+export const FETCH_SURVEY_RESULT_FAILURE = 'FETCH_SURVEY_RESULT_FAILURE';
+
+export function fetchSurveyResultRequest() {
+    return {
+        type: FETCH_SURVEY_RESULT_REQUEST
+    };
+}
+
+export function fetchSurveyResultSuccess(response) {
+    return {
+        type: FETCH_SURVEY_RESULT_SUCCESS,
+        response
+    };
+}
+
+export function fetchSurveyResultFailure(error) {
+    return {
+        type: FETCH_SURVEY_RESULT_FAILURE,
+        error
+    };
+}
+
+export function fetchSurveyResult(SurveyId, callback) {
+    return (dispatch) => {
+        dispatch(fetchSurveyResultRequest());
+        return fetch('/api/v1/surveyresult/getOne', {
+            credentials: 'include'
+        })
+            .then(checkStatus)
+            .then(response => response.json())
+            .then(response => {
+                if (!response.id) {
+                    dispatch(createSurveyResult(SurveyId, callback));
+                    return callback && callback(null, response);
+                }
+                dispatch(fetchSurveyResultSuccess(response));
+                return callback && callback();
+            })
+            .catch(error => {
+                dispatch(fetchSurveyResultFailure(error));
+                return callback && callback();
+            });
+    };
+}
+
+export const CREATE_SURVEY_RESULT_ANSWER_REQUEST = 'CREATE_SURVEY_RESULT_ANSWER_REQUEST';
+export const CREATE_SURVEY_RESULT_ANSWER_SUCCESS = 'CREATE_SURVEY_RESULT_ANSWER_SUCCESS';
+export const CREATE_SURVEY_RESULT_ANSWER_FAILURE = 'CREATE_SURVEY_RESULT_ANSWER_FAILURE';
+
+export function createSurveyResultAnswerRequest() {
+    return {
+        type: CREATE_SURVEY_RESULT_ANSWER_REQUEST
+    };
+}
+
+export function createSurveyResultAnswerSuccess(response) {
+    return {
+        type: CREATE_SURVEY_RESULT_ANSWER_SUCCESS,
+        response
+    };
+}
+
+export function createSurveyResultAnswerFailure(error) {
+    return {
+        type: CREATE_SURVEY_RESULT_ANSWER_FAILURE,
+        error
+    };
+}
+
+export function createSurveyResultAnswer(QuestionId, SurveyResultId, AnswerId, sentiment, callback) {
+    return (dispatch) => {
+        dispatch(createSurveyResultAnswerRequest());
+        fetch('/api/v1/surveyresultanswer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                QuestionId,
+                SurveyResultId,
+                AnswerId,
+                sentiment
+            })
+        })
+            .then(checkStatus)
+            .then(response => response.json())
+            .then(response => {
+                dispatch(createSurveyResultAnswerSuccess(response));
+                callback && callback(null, response);
+            })
+            .catch(error => {
+                dispatch(createSurveyResultAnswerFailure(error));
+                callback(error);
+            });
+    };
+}
+
+export const UPDATE_SURVEY_RESULT_ANSWER_REQUEST = 'UPDATE_SURVEY_RESULT_ANSWER_REQUEST';
+export const UPDATE_SURVEY_RESULT_ANSWER_SUCCESS = 'UPDATE_SURVEY_RESULT_ANSWER_SUCCESS';
+export const UPDATE_SURVEY_RESULT_ANSWER_FAILURE = 'UPDATE_SURVEY_RESULT_ANSWER_FAILURE';
+
+export function updateSurveyResultAnswerRequest() {
+    return {
+        type: UPDATE_SURVEY_RESULT_ANSWER_REQUEST
+    };
+}
+
+export function updateSurveyResultAnswerSuccess(response) {
+    return {
+        type: UPDATE_SURVEY_RESULT_ANSWER_SUCCESS,
+        response
+    };
+}
+
+export function updateSurveyResultAnswerFailure(error) {
+    return {
+        type: UPDATE_SURVEY_RESULT_ANSWER_FAILURE,
+        error
+    };
+}
+
+export function updateSurveyResultAnswer(id, answer, sentiment, callback) {
+    return (dispatch) => {
+        dispatch(updateSurveyResultAnswerRequest());
+        return fetch(`/api/v1/surveyresultanswer/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                SurveyResultAnswer: answer,
+                sentiment: sentiment
+            })
+        })
+            .then(checkStatus)
+            .then(response => response.json())
+            .then(response => {
+                dispatch(updateSurveyResultAnswerSuccess(response));
+                callback(null, response);
+            })
+            .catch(error => {
+                dispatch(updateSurveyResultAnswerFailure(error));
+                callback(error);
+            });
     };
 }
