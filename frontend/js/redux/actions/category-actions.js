@@ -106,3 +106,62 @@ export function postCategoryOrder(SurveyResultId, Categories, callback) {
     };
 }
 
+export const UPDATE_CATEGORY_ORDER_REQUEST = 'UPDATE_CATEGORY_ORDER_REQUEST';
+export const UPDATE_CATEGORY_ORDER_SUCCESS = 'UPDATE_CATEGORY_ORDER_SUCCESS';
+export const UPDATE_CATEGORY_ORDER_FAILURE = 'UPDATE_CATEGORY_ORDER_FAILURE';
+
+export function updateCategoryOrderRequest(categories) {
+    return {
+        type: UPDATE_CATEGORY_ORDER_REQUEST,
+        categories
+    };
+}
+
+export function updateCategoryOrderSuccess(response) {
+    return {
+        type: UPDATE_CATEGORY_ORDER_SUCCESS,
+        response
+    };
+}
+
+export function updateCategoryOrderFailure(error) {
+    return {
+        type: UPDATE_CATEGORY_ORDER_FAILURE,
+        error
+    };
+}
+
+export function updateCategoryOrder(SurveyResultId, Categories, callback) {
+
+    const SurveyResultCategories = Categories.map((cat, index) => {
+        return {
+            SurveyResultId,
+            CategoryId: cat.id,
+            rank: index + 1
+        };
+    });
+
+    return (dispatch) => {
+        dispatch(updateCategoryOrderRequest());
+        return fetch('/api/v1/surveyresultcategory/rank', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                SurveyResultCategories
+            })
+        })
+            .then(checkStatus)
+            .then(response => response.json())
+            .then(response => {
+                dispatch(updateCategoryOrderSuccess(response));
+                callback && callback(null, response);
+            })
+            .catch(error => {
+                dispatch(updateCategoryOrderFailure(error));
+                callback && callback(error);
+            });
+    };
+}
+
