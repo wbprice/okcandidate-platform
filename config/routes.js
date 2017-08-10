@@ -154,6 +154,11 @@ module.exports = [
     {
         method: ['POST'],
         path: '/api/v1/surveyresultcategory/rank',
-        handler: 'SurveyResultCategoryController.rank'
+        handler: 'SurveyResultCategoryController.postAll'
+    },
+    {
+        method: ['PUT'],
+        path: '/api/v1/surveyresultcategory/rank',
+        handler: 'SurveyResultCategoryController.updateAll'
     }
 ];

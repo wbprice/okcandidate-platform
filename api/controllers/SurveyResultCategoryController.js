@@ -9,41 +9,38 @@ const Boom = require('boom');
  */
 module.exports = class SurveyResultCategoryController extends Controller {
 
-    rank(request, reply) {
+    postAll(request, reply) {
         const SurveyResultCategories = request.payload.SurveyResultCategories;
 
-        // Check to see if these are new records (no ID)
-        const newRecords = SurveyResultCategories.some(src => !src.id);
+        Promise.all(SurveyResultCategories.map(src => {
+            return this.app.orm.SurveyResultCategory.create({
+                SurveyResultId: src.SurveyResultId,
+                CategoryId: src.CategoryId,
+                rank: src.rank
+            });
+        }))
+            .then(records => {
+                reply(records);
+            })
+            .catch(error => {
+                reply(Boom.badRequest(error));
+            });
+    }
 
-        if (newRecords) {
-            return Promise.all(SurveyResultCategories.map(src => {
-                return this.app.orm.SurveyResultCategory.create({
-                    SurveyResultId: src.SurveyResultId,
-                    CategoryId: src.CategoryId,
-                    rank: src.rank
-                });
-            }))
-                .then(records => {
-                    reply(records);
-                })
-                .catch(error => {
-                    reply(Boom.badRequest(error));
-                });
-        }
+    updateAll(request, reply) {
+        const SurveyResultCategories = request.payload.SurveyResultCategories;
 
-        else {
-            return Promise.all(SurveyResultCategories.map(src => {
-                return this.app.orm.SurveyResultCategory.update({
-                    where: {id: src.id},
-                    rank: src.rank
-                });
-            }))
-                .then(records => {
-                    reply(records);
-                })
-                .catch(error => {
-                    reply(Boom.badRequest(error));
-                });
-        }
+        Promise.all(SurveyResultCategories.map(src => {
+            return this.app.orm.SurveyResultCategory.update({
+                where: {id: src.id},
+                rank: src.rank
+            });
+        }))
+            .then(records => {
+                reply(records);
+            })
+            .catch(error => {
+                reply(Boom.badRequest(error));
+            });
     }
 };
