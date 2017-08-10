@@ -31,10 +31,10 @@ module.exports = class SurveyResultCategoryController extends Controller {
         const SurveyResultCategories = request.payload.SurveyResultCategories;
 
         Promise.all(SurveyResultCategories.map(src => {
-            return this.app.orm.SurveyResultCategory.update({
-                where: {id: src.id},
-                rank: src.rank
-            });
+            return this.app.orm.SurveyResultCategory.update(
+                {rank: src.rank},
+                {where: {id: src.id}}
+            );
         }))
             .then(records => {
                 reply(records);

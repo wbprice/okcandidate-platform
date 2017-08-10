@@ -10,7 +10,8 @@ import { gotoRoute } from './../../redux/actions/router-actions';
 
 import {
     fetchCategoryList,
-    postCategoryOrder
+    postCategoryOrder,
+    updateCategoryOrder
 } from './../../redux/actions/category-actions';
 
 import {
@@ -42,14 +43,30 @@ class Category extends Component {
         );
     }
 
+    update() {
+        this.props.dispatch(
+            updateCategoryOrder(
+                this.props.category.SurveyResultId,
+                this.props.category.categories,
+                (error) => {
+                    if (!error) {
+                        gotoRoute(`/survey/${this.props.params.id}/questions`);
+                    }
+                }
+            )
+        );
+    }
+
     render() {
         // const categories = this.props.category.categories;
         let categories = [];
+        let shouldUpdate;
         const SurveyResultCategories = this.props.category.SurveyResultCategories;
         const Categories = this.props.category.categories;
 
         // If user has already sorted categories, sort the categories in that order.
         if (SurveyResultCategories.length) {
+            shouldUpdate = true;
             categories = SurveyResultCategories.reduce((memo, value) => {
                 memo[value.rank - 1] = Categories.find(cat => cat.id === value.CategoryId);
                 return memo;
@@ -74,7 +91,10 @@ class Category extends Component {
                     dispatch={this.props.dispatch}
                     categories={categories} />
 
-                <button onClick={this.submit.bind(this)}>Submit</button>
+                { shouldUpdate ?
+                    <button onClick={this.update.bind(this)}>Update</button> :
+                    <button onClick={this.submit.bind(this)}>Submit</button>
+                }
 
             </div>
         );

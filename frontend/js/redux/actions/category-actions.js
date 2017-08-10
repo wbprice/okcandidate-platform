@@ -51,10 +51,9 @@ export const POST_CATEGORY_ORDER_REQUEST = 'POST_CATEGORY_ORDER_REQUEST';
 export const POST_CATEGORY_ORDER_SUCCESS = 'POST_CATEGORY_ORDER_SUCCESS';
 export const POST_CATEGORY_ORDER_FAILURE = 'POST_CATEGORY_ORDER_FAILURE';
 
-export function postCategoryOrderRequest(categories) {
+export function postCategoryOrderRequest() {
     return {
-        type: POST_CATEGORY_ORDER_REQUEST,
-        categories
+        type: POST_CATEGORY_ORDER_REQUEST
     };
 }
 

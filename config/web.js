@@ -33,7 +33,6 @@ module.exports = {
       register: require('yar'),
       options: {
         storeBlank: false,
-        name: 'potato',
         cookieOptions: {
           password: process.env['OKC_SESSION_SECRET_KEY'],
           isSecure: false
