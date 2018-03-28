@@ -14,6 +14,8 @@ services:
       GOOGLE_API_KEY: google_api_key
     volumes:
       - .:/usr/src/api
+    networks:
+      - overlay
     ports:
       - "8080:8080"
       - "9229:9229"
@@ -23,6 +25,8 @@ services:
     build: ./frontend/.
     volumes:
       - .:/usr/src/app
+    networks:
+      - overlay
     ports:
       - "80:3000"
 
@@ -35,4 +39,6 @@ services:
     ports:
       - "5432:5432"
 
+networks:
+  overlay:
 
