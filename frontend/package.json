@@ -4,9 +4,9 @@
   "description": "OKCandidate frontend app",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "NODE_ENV=development node index.js",
     "build": "next build",
-    "start": "next start"
+    "start": "next build && NODE_ENV=production node index.js"
   },
   "author": "",
   "license": "MIT",
