@@ -6,25 +6,24 @@
 
 const express = require('express');
 const exp = express();
-const proxy = require('http-proxy-middleware');
 const { parse } = require('url')
 const next = require('next')
 const path = require('path');
-const fetch = require("isomorphic-fetch");
 
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
-  exp.get('/survey/:id/:page', (req, req) => {
+
+  exp.get('/survey/:id/:page', (req, res) => {
     const {id, page} = req.params;
-    console.log('stuff');
-    console.log(id, page);
-    return handle(req, res, parse(req.url, true));    
+    return app.render(req, res, `/${page}`, req.params);
   });
 
   exp.get('/*', (req, res) => {
     return handle(req, res, parse(req.url, true));
   });
+
+  exp.listen(3000);
 })
