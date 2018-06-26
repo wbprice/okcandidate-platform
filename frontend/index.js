@@ -21,6 +21,10 @@ app.prepare().then(() => {
     return app.render(req, res, `/${page}`, req.params);
   });
 
+  exp.get('/results/:passPhrase', (req, res) => {
+    return app.render(req, res, '/results', req.params)
+  });
+
   exp.get('/*', (req, res) => {
     return handle(req, res, parse(req.url, true));
   });

@@ -24,7 +24,6 @@ class Survey extends Component {
     }
 
     componentDidMount() {
-        debugger;
         this.props.dispatch(fetchSurveyResult(this.props.url.query.id, (error) => {
             if (!error) {
                 this.props.dispatch(fetchSurveyQuestions(this.props.url.query.id));
